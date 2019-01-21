@@ -9,8 +9,9 @@
                 <tr>
                     <th scope="col">ID</th>
                     <th scope="col">Table Number</th>
-                    <th scope="col">Create a check</th>
                     <th scope="col">View Checks</th>
+                    <th scope="col">Create a check</th>
+                    <th scope="col">View All Checks</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -18,11 +19,15 @@
                     <th scope="row">{{table.id}}</th>
                     <td>{{table.number}}</td>
                     <td>
+                        <button type="button" class="btn btn-primary" (click)="getCheckByTableId(table, true)">View
+                        </button>
+                    </td>
+                    <td>
                         <label class="checkbox-inline" (click)="createCheck(table.id)"><input #checkboxes
                                                                                               type="checkbox" value=""></label>
                     </td>
                     <td>
-                        <button type="button" class="btn btn-primary" (click)="getCheckByTableId(table)">View
+                        <button type="button" class="btn btn-primary" (click)="getCheckByTableId(table, false)">View All
                         </button>
                     </td>
                 </tr>
@@ -61,13 +66,29 @@
                             <button type="button" class="btn btn-primary" (click)="getCheckById(check.id)">View
                             </button>
                         </td>
-                        <td>
+                        <td *ngIf="!check.closed">
                             <button type="button" class="btn btn-danger" (click)="closeCheckById(check.id)">Close
                             </button>
                         </td>
                     </tr>
                     </tbody>
                 </table>
+                <div class="col-sm-6" *ngIf="checksByTableId.length" style="padding-top: 40px;">
+                    <table class="table table-hover" *ngIf="closedCheck && closedCheck.closed">
+                        <tr>
+                            <th>Taxes</th>
+                            <th>{{closedCheck.tax}}</th>
+                        </tr>
+                        <tr>
+                            <th>Tip</th>
+                            <th>{{closedCheck.tip}}</th>
+                        </tr>
+                    </table>
+                </div>
+                <div *ngIf="checksByTableId.length">
+                    <h2 *ngIf="closedCheck && closedCheck.closed" style="padding-top: 40px; text-align: center">
+                        The Check has been Closed.</h2>
+                </div>
                 <div *ngIf="!checksByTableId.length" style="padding-top: 40px; text-align: center"><h2>There is no check
                     for selected
                     Table.</h2>
@@ -117,6 +138,7 @@
                     <tr>
                         <th scope="col">Unique ID</th>
                         <th scope="col">ITEM ID</th>
+                        <th scope="col">ITEM NAME</th>
                         <th scope="col">CHECK ID</th>
                         <th scope="col">Creation Date</th>
                         <th scope="col">Updation Date</th>
@@ -129,13 +151,16 @@
                     <tr *ngFor="let item of orderItems" style="width: 50px">
                         <th scope="row">{{item.id}}</th>
                         <td>{{item.itemId}}</td>
+                        <td>{{item.name}}</td>
                         <td>{{item.checkId}}</td>
                         <td>{{item.dateCreated}}</td>
                         <td>{{item.dateUpdated}}</td>
                         <td>{{item.createdBy}}</td>
                         <td>{{item.voided}}</td>
-                        <td><button type="button" class="btn btn-danger" (click)="voidAnItem(item.id)">VOID
-                        </button></td>
+                        <td>
+                            <button type="button" class="btn btn-danger" (click)="voidAnItem(item.id)">VOID
+                            </button>
+                        </td>
                     </tr>
                     </tbody>
                 </table>
